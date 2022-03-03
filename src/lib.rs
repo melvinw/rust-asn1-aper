@@ -17,19 +17,18 @@
 //! *`INTEGER` fields of arbitrary widths (in PER encodings) can be decoded/encoded as long as they fit in an `i64`
 //! (see [aper::Decoder::decode_int](aper/struct.Decoder.html#method.decode_int) and
 //! [aper::encode_int](aper/fn.encode_int.html)).
-#![feature(associated_consts)]
 extern crate byteorder;
 
 /// Tools for encoding and decoding ASN.1 messages of the Aligned PER flavor.
 pub mod aper;
 
 mod bit_string;
-mod integer;
-mod sequence_of;
-mod sequence;
 mod bool;
 mod extensions;
+mod integer;
 mod null;
+mod sequence;
+mod sequence_of;
 mod utils;
 
 pub use bit_string::BitString;

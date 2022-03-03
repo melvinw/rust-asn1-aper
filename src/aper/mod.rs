@@ -1,7 +1,7 @@
 mod decoder;
 mod encoding;
-pub use self::decoder::{Decoder, DecodeError};
-pub use self::encoding::{Encoding, EncodeError, encode_int, encode_length};
+pub use self::decoder::{DecodeError, Decoder};
+pub use self::encoding::{encode_int, encode_length, EncodeError, Encoding};
 
 pub const LENGTH_DET_SHORT: u8 = 0b0000_0000;
 pub const LENGTH_DET_LONG: u8 = 0b1000_0000;
@@ -21,10 +21,7 @@ pub struct Constraint {
 impl Constraint {
     /// Construct a new `Constraint`.
     pub fn new(min: Option<i64>, max: Option<i64>) -> Constraint {
-        Constraint {
-            min: min,
-            max: max,
-        }
+        Constraint { min: min, max: max }
     }
 
     /// Get the lower bound.
@@ -67,7 +64,6 @@ pub const UNCONSTRAINED: Constraints = Constraints {
 /// The corresponding struct and `APerElement` implementation are shown below.
 ///
 /// ```
-/// #![feature(associated_consts)]
 /// extern crate asn1;
 /// use asn1::BitString;
 /// use asn1::aper::{self, APerElement, Constraint, Constraints, UNCONSTRAINED};
@@ -80,7 +76,6 @@ pub const UNCONSTRAINED: Constraints = Constraints {
 /// impl APerElement for Foo {
 ///    type Result = Self;
 ///    const TAG: u32 = 0xBEEF;
-///    const CONSTRAINTS: Constraints = UNCONSTRAINED;
 ///    fn from_aper(decoder: &mut aper::Decoder, constraints: Constraints) -> Result<Self::Result, aper::DecodeError> {
 ///        let bar = BitString::from_aper(decoder , Constraints {
 ///            value: None,
@@ -131,7 +126,6 @@ pub const UNCONSTRAINED: Constraints = Constraints {
 /// The corresponding enum and `APerElement` implementation would look like this.
 ///
 /// ```
-/// #![feature(associated_consts)]
 /// extern crate asn1;
 /// use asn1::BitString;
 /// use asn1::aper::{self, APerElement, Constraint, Constraints, UNCONSTRAINED};
@@ -218,9 +212,6 @@ pub const UNCONSTRAINED: Constraints = Constraints {
 /// }
 /// ```
 pub trait APerElement: Sized {
-    /// PER-visible Constraints
-    const CONSTRAINTS: Constraints;
-
     /// Constructor for the `Result` type given an aligned PER encoding.
     fn from_aper(decoder: &mut Decoder, constraints: Constraints) -> Result<Self, decoder::DecodeError>;
 

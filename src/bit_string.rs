@@ -1,4 +1,4 @@
-use aper::{APerElement, Constraints, Decoder, DecodeError, Encoding, EncodeError};
+use aper::{APerElement, Constraints, DecodeError, Decoder, EncodeError, Encoding};
 use std::cmp;
 use utils::shift_bytes_left;
 
@@ -92,11 +92,6 @@ impl BitString {
 }
 
 impl APerElement for BitString {
-    const CONSTRAINTS: Constraints = Constraints {
-        value: None,
-        size: None,
-    };
-
     /// Construct a `BitString` from an aligned PER encoding.
     fn from_aper(decoder: &mut Decoder, constraints: Constraints) -> Result<Self, DecodeError> {
         if constraints.size.is_none() {

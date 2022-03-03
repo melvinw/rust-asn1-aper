@@ -1,11 +1,6 @@
-use aper::{APerElement, Constraints, Decoder, DecodeError, Encoding, EncodeError, encode_length};
+use aper::{encode_length, APerElement, Constraints, DecodeError, Decoder, EncodeError, Encoding};
 
 impl<T: APerElement> APerElement for Vec<T> {
-    const CONSTRAINTS: Constraints = Constraints {
-        value: None,
-        size: None,
-    };
-
     /// Read a `Vec[T]` from an aligned PER encoding.
     fn from_aper(decoder: &mut Decoder, constraints: Constraints) -> Result<Self, DecodeError> {
         if constraints.size.is_none() {
@@ -61,11 +56,13 @@ impl<T: APerElement> APerElement for Vec<T> {
         }
         let mut enc = ret.unwrap();
         for x in self {
-            let ret = enc.append(&x.to_aper(Constraints {
+            let ret = enc.append(
+                &x.to_aper(Constraints {
                     value: None,
                     size: constraints.value,
                 })
-                .unwrap());
+                .unwrap(),
+            );
             if ret.is_err() {
                 return Err(ret.err().unwrap());
             }

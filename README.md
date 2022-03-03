@@ -25,7 +25,6 @@ foo ::= SEQUENCE {
 ```
 
 ```rust
-#![feature(associated_consts)]
 extern crate asn1;
 use asn1::BitString;
 use asn1::aper::{self, APerElement, Constraint, Constraints, UNCONSTRAINED};
@@ -36,7 +35,6 @@ struct foo {
 }
 
 impl APerElement for Foo {
-    const CONSTRAINTS: Constraints = UNCONSTRAINED;
     fn from_aper(decoder: &mut aper::Decoder, constraints: Constraints) -> Result<Self, aper::DecodeError> {
         let bar = BitString::from_aper(decoder , Constraints {
             value: None,

@@ -1,7 +1,6 @@
-#![feature(associated_consts)]
 extern crate asn1;
-use asn1::BitString;
 use asn1::aper::{self, APerElement, Constraint, Constraints, Encoding, UNCONSTRAINED};
+use asn1::BitString;
 
 #[derive(Debug)]
 struct Foo {
@@ -11,24 +10,32 @@ struct Foo {
 }
 
 impl APerElement for Foo {
-    const CONSTRAINTS: Constraints = UNCONSTRAINED;
     fn from_aper(decoder: &mut aper::Decoder, _: Constraints) -> Result<Self, aper::DecodeError> {
-        let foo = BitString::from_aper(decoder , Constraints {
-            value: None,
-            size: Some(Constraint::new(None, Some(4))),
-        });
+        let foo = BitString::from_aper(
+            decoder,
+            Constraints {
+                value: None,
+                size: Some(Constraint::new(None, Some(4))),
+            },
+        );
 
-        let bar = Vec::<u8>::from_aper(decoder, Constraints {
-            value: None,
-            size: Some(Constraint::new(None, Some(3))),
-        });
+        let bar = Vec::<u8>::from_aper(
+            decoder,
+            Constraints {
+                value: None,
+                size: Some(Constraint::new(None, Some(3))),
+            },
+        );
 
-        let baz = Vec::<BitString>::from_aper(decoder, Constraints {
-            // here the "value" constraint is a constraint on the size of each element
-            value: Some(Constraint::new(None, Some(4))), 
-            // "size" behaves normally 
-            size: Some(Constraint::new(None, Some(2))),
-        });
+        let baz = Vec::<BitString>::from_aper(
+            decoder,
+            Constraints {
+                // here the "value" constraint is a constraint on the size of each element
+                value: Some(Constraint::new(None, Some(4))),
+                // "size" behaves normally
+                size: Some(Constraint::new(None, Some(2))),
+            },
+        );
 
         if foo.is_err() {
             return Err(foo.err().unwrap());
@@ -40,30 +47,45 @@ impl APerElement for Foo {
             return Err(baz.err().unwrap());
         }
 
-        Ok(Foo{
+        Ok(Foo {
             foo: foo.unwrap(),
             bar: bar.unwrap(),
             baz: baz.unwrap(),
         })
     }
-    
+
     fn to_aper(&self, _: Constraints) -> Result<Encoding, aper::EncodeError> {
-        let mut enc = self.foo.to_aper(Constraints {
-            value: None,
-            size: Some(Constraint::new(None, Some(4))),
-        }).unwrap();
+        let mut enc = self
+            .foo
+            .to_aper(Constraints {
+                value: None,
+                size: Some(Constraint::new(None, Some(4))),
+            })
+            .unwrap();
 
-        enc.append(&self.bar.to_aper(Constraints {
-            value: None,
-            size: Some(Constraint::new(None, Some(3))),
-        }).unwrap()).unwrap();
+        enc.append(
+            &self
+                .bar
+                .to_aper(Constraints {
+                    value: None,
+                    size: Some(Constraint::new(None, Some(3))),
+                })
+                .unwrap(),
+        )
+        .unwrap();
 
-        enc.append(&self.baz.to_aper(Constraints {
-            // here the "value" constraint is a constraint on the size of each element
-            value: Some(Constraint::new(None, Some(4))), 
-            // "size" behaves normally 
-            size: Some(Constraint::new(None, Some(2))),
-        }).unwrap()).unwrap();
+        enc.append(
+            &self
+                .baz
+                .to_aper(Constraints {
+                    // here the "value" constraint is a constraint on the size of each element
+                    value: Some(Constraint::new(None, Some(4))),
+                    // "size" behaves normally
+                    size: Some(Constraint::new(None, Some(2))),
+                })
+                .unwrap(),
+        )
+        .unwrap();
 
         Ok(enc)
     }
